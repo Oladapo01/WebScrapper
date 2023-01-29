@@ -33,7 +33,7 @@ def scrape_data(websites):
     data = {}
     """Get website links from the provided Url"""
     for website in websites:
-        print(f"Scraping data from {website}")
+        print(f"Scraping data from {website} completed")
         links = grab_weblink(website)
         """Add the data to the dictionary with the website's URL as the key"""
         data[website] = links
