@@ -23,8 +23,10 @@ def get_table_data(url):
     return link
 
 def save_data(data, filename):
+    """Ask the user for the name of the file to save the data"""
+    filename = filename + '.json'
     """Save the data in a json file"""
-    with open('data.json', 'w') as file:
+    with open(filename, 'w') as file:
         json.dump(data, file, indent=4)
 
 def scrape_data(websites):
@@ -36,7 +38,7 @@ def scrape_data(websites):
         """Add the data to the dictionary with the website's URL as the key"""
         data[url] = table_data
     data['scrapped at'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    save_data(data, 'data.json')
+    save_data(data, file_name)
 
 if __name__ == '__main__':
     websites = []
@@ -46,4 +48,5 @@ if __name__ == '__main__':
             break
         else:
             websites.append(url)
+    file_name = input('Enter the name of the file to save the data: ')
     scrape_data(websites)
