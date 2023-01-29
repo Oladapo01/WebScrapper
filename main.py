@@ -1,4 +1,4 @@
-import bs4 as BeautifulSoup
+import bs4
 import json
 import requests
 import datetime
@@ -6,7 +6,7 @@ import datetime
 def get_table_data(url):
     """Get the url and return the response"""
     response = requests.get(url)
-    soup = BeautifulSoup(response.content, 'html.parser')
+    soup = bs4.BeautifulSoup(response.content, 'html.parser')
     """locate the table element"""
     table =soup.find('table')
     """locate all the table row element within the table"""
@@ -17,7 +17,8 @@ def get_table_data(url):
         """locate all the td element within the tr element"""
         cols = row.find_all('td')
         """Extract the the text from each td element"""
-        cols = [col.text.strip() for col in cols]
+        cols = [col.text.strip().replace('\n', ' ') for col in cols]
+        cols = cols[:2]
         link.append(cols)
     return link
 
@@ -26,17 +27,23 @@ def save_data(data, filename):
     with open('data.json', 'w') as file:
         json.dump(data, file, indent=4)
 
-
-def scrape_data(urls):
+def scrape_data(websites):
     data = {}
-    for website in websites:
-        """Get the table data from the website"""
-        table_data = get_table_data(website)
+    """Get the table data from the website"""
+    for i, url in enumerate(websites):
+        print(f"Scraping data from {url}, {i+1} of {len(websites)}")
+        table_data = get_table_data(url)
         """Add the data to the dictionary with the website's URL as the key"""
-        data[website] = table_data
+        data[url] = table_data
     data['scrapped at'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     save_data(data, 'data.json')
 
 if __name__ == '__main__':
     websites = []
+    while True:
+        url = input('Enter the url of the website (Enter q to quit): ')
+        if url == 'q':
+            break
+        else:
+            websites.append(url)
     scrape_data(websites)
